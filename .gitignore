@@ -19,3 +19,9 @@
 
 # Go workspace file
 go.work
+
+# Customs
+settings/**
+!settings/template.json
+slither/**
+out/**

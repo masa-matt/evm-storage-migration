@@ -1,0 +1,53 @@
+{
+  "name": "Template",
+  "address": "0x0000000000000000000000000000000000000000",
+  "proxy": true,
+  "struct": [
+    {
+      "name": "StructName",
+      "size": 4
+    }
+  ],
+  "ids": [
+    {
+      "name": "variableName",
+      "key": "address",
+      "addresses": "addressesName",
+      "index": 0
+    }
+  ],
+  "mapping": [
+    {
+      "key": "uint256",
+      "ids": "idsName",
+      "target": [
+        "variableName"
+      ]
+    },
+    {
+      "key": "address",
+      "addresses": "addressesName",
+      "index": 0,
+      "target": [
+        "variableName"
+      ],
+      "struct": {
+        "name": "StructName",
+        "size": 4
+      }
+    }
+  ],
+  "addresses": [
+    {
+      "name": "eventName",
+      "logs": {
+        "topic": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "size": 1,
+        "indexes": [
+          1
+        ],
+        "hasData": false
+      }
+    }
+  ]
+}
