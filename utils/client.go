@@ -8,14 +8,12 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-)
 
-const (
-	nodeUrl = "https://ethereum.publicnode.com"
+	"evm-storage-migration/config"
 )
 
 func client() *ethclient.Client {
-	client, err := ethclient.Dial(nodeUrl)
+	client, err := ethclient.Dial(config.GetNodeUrl())
 	if err != nil {
 		panic(err)
 	}

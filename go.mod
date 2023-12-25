@@ -34,4 +34,7 @@ require (
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
 
-require github.com/ethereum/go-ethereum v1.13.5
+require (
+	github.com/ethereum/go-ethereum v1.13.5
+	github.com/joho/godotenv v1.5.1
+)

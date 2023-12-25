@@ -25,3 +25,4 @@ settings/**
 !settings/template.json
 slither/**
 out/**
+.env

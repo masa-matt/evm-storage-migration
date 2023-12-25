@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"evm-storage-migration/migration"
+
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -23,6 +25,11 @@ func init() {
 	}
 
 	flag.StringVar(&target, "target", "", "Specify the Contract Name")
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
