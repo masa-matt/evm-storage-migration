@@ -3,13 +3,12 @@ package types
 import (
 	"encoding/json"
 	"errors"
+	"evm-storage-migration/utils"
 	"fmt"
-	"io/ioutil"
 	"math/big"
 	"os"
 	"strconv"
 	"strings"
-	"evm-storage-migration/utils"
 
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -29,7 +28,7 @@ func GetSlither(name string) []SlitherResult {
 	if _, err := os.Stat(filename); errors.Is(err, os.ErrNotExist) {
 		return nil
 	}
-	bytesJSON, err := ioutil.ReadFile(filename)
+	bytesJSON, err := os.ReadFile(filename)
 	if err != nil {
 		panic(err)
 	}

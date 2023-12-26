@@ -1,14 +1,14 @@
 package logs
 
 import (
-	"sort"
 	"evm-storage-migration/utils"
+	"sort"
 
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func Addresses(contract, topic string, addresses [][]common.Hash, ids []int, hasData bool) [][]common.Hash {
-	logs := utils.Logs(common.HexToAddress(contract), common.HexToHash(topic))
+func Addresses(client *utils.Client, contract, topic string, addresses [][]common.Hash, ids []int, hasData bool) [][]common.Hash {
+	logs := client.Logs(common.HexToAddress(contract), common.HexToHash(topic))
 	for _, vLog := range logs {
 		for i, id := range ids {
 			addresses[i] = append(addresses[i], vLog.Topics[id])

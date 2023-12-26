@@ -1,10 +1,10 @@
 package storage
 
 import (
-	"fmt"
-	"math/big"
 	"evm-storage-migration/migration/types"
 	"evm-storage-migration/utils"
+	"fmt"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -18,9 +18,9 @@ func StoreStorage(storage *map[string]string, data types.StorageResults) {
 	(*storage)[data.Key.Hex()] = data.Value.Hex()
 }
 
-func GetImplementation(contract string) types.StorageResults {
+func GetImplementation(client *utils.Client, contract string) types.StorageResults {
 	key := common.HexToHash(IMPLEMENTATION_SLOT)
-	value := utils.Storage(common.HexToAddress(contract), key)
+	value := client.Storage(common.HexToAddress(contract), key)
 	return types.StorageResults{
 		Kvset: fmt.Sprintf("\"%s\":\"%s\"", key.Hex(), value.Hex()),
 		Key:   key,
@@ -28,7 +28,7 @@ func GetImplementation(contract string) types.StorageResults {
 	}
 }
 
-func GetKV(contract string, storageType types.StorageType, slot int, args ...interface{}) types.StorageResults {
+func GetKV(client *utils.Client, contract string, storageType types.StorageType, slot int, args ...interface{}) types.StorageResults {
 	slotHash := common.HexToHash(fmt.Sprintf("%x", slot))
 	var key common.Hash
 	switch storageType {
@@ -59,7 +59,7 @@ func GetKV(contract string, storageType types.StorageType, slot int, args ...int
 		i := new(big.Int).Add(utils.HashToUint(key), big.NewInt(int64(index)))
 		key = common.HexToHash(fmt.Sprintf("%x", i))
 	}
-	value := utils.Storage(common.HexToAddress(contract), key)
+	value := client.Storage(common.HexToAddress(contract), key)
 	return types.StorageResults{
 		Kvset: fmt.Sprintf("\"%s\":\"%s\"", key.Hex(), value.Hex()),
 		Key:   key,

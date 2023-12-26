@@ -3,7 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"slices"
 	"strings"
 )
@@ -16,6 +16,7 @@ type Settings struct {
 	Ids       []Ids
 	Mapping   []Mapping
 	Addresses []Addresses
+	Verify    []Verify
 }
 
 type Ids struct {
@@ -51,8 +52,13 @@ type Logs struct {
 	HasData bool
 }
 
+type Verify struct {
+	Method string
+	Target []string
+}
+
 func GetSettings(name string) Settings {
-	bytesJSON, err := ioutil.ReadFile(fmt.Sprintf("./settings/%s.json", name))
+	bytesJSON, err := os.ReadFile(fmt.Sprintf("./settings/%s.json", name))
 	if err != nil {
 		panic(err)
 	}
@@ -101,4 +107,15 @@ func FindStructSize(settings Settings, typeString string) int {
 		}
 	}
 	return 1
+}
+
+func FindVerify(settings Settings, name string) *Verify {
+	for _, verify := range settings.Verify {
+		for _, target := range verify.Target {
+			if target == name {
+				return &verify
+			}
+		}
+	}
+	return nil
 }

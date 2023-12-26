@@ -21,8 +21,10 @@
 go.work
 
 # Customs
+evm-storage-migration
 settings/**
 !settings/template.json
 slither/**
 out/**
+verify/**
 .env
