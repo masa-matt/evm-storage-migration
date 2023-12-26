@@ -49,5 +49,13 @@
         "hasData": false
       }
     }
+  ],
+  "verify": [
+    {
+      "method": "method(inputType,inputType2)(outputType,outputType2)",
+      "target": [
+        "variableName"
+      ]
+    }
   ]
 }
