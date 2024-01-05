@@ -32,3 +32,10 @@ func HashToUint(hash common.Hash) *big.Int {
 	i.SetString(hash.Hex()[2:], 16)
 	return i
 }
+
+func IsEmptyStringSlice(slice []string) bool {
+	if len(slice) == 0 || slice == nil || slice[0] == "" {
+		return true
+	}
+	return false
+}

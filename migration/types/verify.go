@@ -2,12 +2,12 @@ package types
 
 import (
 	"encoding/json"
+	"evm-storage-migration/utils"
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
-	"golang.org/x/exp/slices"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type Verifier struct {
@@ -18,8 +18,8 @@ type Verifier struct {
 
 type VerifyData struct {
 	Method string        `json:"method"`
-	Input  []interface{} `json:"input"`
-	Target []string      `json:"target"`
+	Input  []interface{} `json:"input,omitempty"`
+	Target []string      `json:"target,omitempty"`
 }
 
 func WriteVerifier(verifier Verifier) {
@@ -49,29 +49,34 @@ func ReadVerifier(name string) Verifier {
 	return verifier
 }
 
-func StoreData(verifier *Verifier, verify *Verify, data interface{}) {
-	if verify == nil {
+func StoreData(verifier *Verifier, verify Verify, data interface{}) {
+	if i := findVerifyDataIndex(verifier, verify.Method); i != nil {
 		return
 	}
-	if i := findVerifyDataIndex(verifier, verify.Method); i != nil {
-		if len(verifier.Verify[*i].Target) == 0 {
-			verifier.Verify[*i].Target = verify.Target
+	if data != nil {
+		input := make([]interface{}, 0)
+		if verify.Addresses != nil {
+			addresses := data.([]common.Hash)
+			for _, address := range addresses {
+				input = append(input, utils.HashToAddress(address).Hex())
+			}
+		} else if verify.Input.Data != nil {
+			input = *verify.Input.Data
+		} else {
+			hash := data.(common.Hash)
+			for i := 0; i < int(utils.HashToUint(hash).Int64()); i++ {
+				input = append(input, i+1)
+			}
 		}
-		var cmpData interface{}
-		switch v := data.(type) {
-		case string:
-			cmpData = strings.ToLower(v)
-		default:
-			cmpData = data
-		}
-		if !slices.Contains(verifier.Verify[*i].Input, cmpData) {
-			verifier.Verify[*i].Input = append(verifier.Verify[*i].Input, data)
-		}
+		verifier.Verify = append(verifier.Verify, VerifyData{
+			Method: verify.Method,
+			Input:  input,
+			Target: verify.Target,
+		})
 		return
 	}
 	verifier.Verify = append(verifier.Verify, VerifyData{
 		Method: verify.Method,
-		Input:  []interface{}{data},
 		Target: verify.Target,
 	})
 }

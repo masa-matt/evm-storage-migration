@@ -53,8 +53,24 @@ type Logs struct {
 }
 
 type Verify struct {
-	Method string
-	Target []string
+	Method    string
+	Input     *VerifyInput
+	Addresses *string
+	Index     *int
+	Target    []string
+}
+
+type VerifyInput struct {
+	Method *string
+	Type   *string
+	Data   *[]interface{}
+}
+
+func (v *Verify) HasInput() bool {
+	inputS := strings.Index(v.Method, "(")
+	inputE := strings.Index(v.Method, ")")
+	inputArray := strings.Split(v.Method[inputS+1:inputE], ",")
+	return len(inputArray) != 0
 }
 
 func GetSettings(name string) Settings {
@@ -106,7 +122,7 @@ func FindStructSize(settings Settings, typeString string) int {
 			return st.Size
 		}
 	}
-	return 1
+	return 0
 }
 
 func FindVerify(settings Settings, name string) *Verify {

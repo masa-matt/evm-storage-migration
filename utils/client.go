@@ -82,8 +82,11 @@ func (client *Client) Call(to common.Address, sig string, args ...interface{}) [
 
 func makeData(sig string, args ...interface{}) []byte {
 	mutability := "view"
-	name, inputs, outputs, abiType := ParseSig(sig)
-	encodedArgs := EncodeArgs(args, abiType)
+	name, inputs, outputs, abiTypes := ParseSig(sig)
+	encodedArgs := args
+	if abiTypes != nil {
+		encodedArgs = EncodeArgs(args, abiTypes)
+	}
 
 	method := abi.NewMethod(name, name, abi.Function, mutability, false, false, inputs, outputs)
 

@@ -42,12 +42,22 @@ func Verify(target string) {
 
 	fmt.Println("### Verify Function ###")
 	for _, verify := range verifier.Verify {
-		for _, arg := range verify.Input {
-			fromData := fromClient.Call(address, verify.Method, arg)
-			toData := toClient.Call(address, verify.Method, arg)
-			if !bytes.Equal(fromData, toData) {
-				fmt.Printf("result not matched!!! method: %s, r1: %s, r2: %s\n", verify.Method, hex.EncodeToString(fromData), hex.EncodeToString(toData))
+		fmt.Printf("verifying: %s\n", verify.Method)
+		if len(verify.Input) > 0 {
+			for _, arg := range verify.Input {
+				fromData := fromClient.Call(address, verify.Method, arg)
+				toData := toClient.Call(address, verify.Method, arg)
+				if !bytes.Equal(fromData, toData) {
+					fmt.Printf("result not matched!!! method: %s, r1: %s, r2: %s\n", verify.Method, hex.EncodeToString(fromData), hex.EncodeToString(toData))
+				}
 			}
+			continue
+		}
+
+		fromData := fromClient.Call(address, verify.Method)
+		toData := toClient.Call(address, verify.Method)
+		if !bytes.Equal(fromData, toData) {
+			fmt.Printf("result not matched!!! method: %s, r1: %s, r2: %s\n", verify.Method, hex.EncodeToString(fromData), hex.EncodeToString(toData))
 		}
 	}
 	printResult(result)

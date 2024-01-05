@@ -50,7 +50,6 @@ func Migrate(target string) {
 		slot := int(read.SlitherResult.Slot.Int64())
 		addresses := addrs[read.Ids.Addresses][read.Ids.Index]
 		for _, address := range addresses {
-			// storeComment(&contract.Storage, read.SlitherResult.Name, &i)
 			mappingType := types.MappingType(read.SlitherResult.TypeString)
 			data := storage.GetKV(client, settings.Address, mappingType, slot, address)
 			storage.StoreStorage(&contract.Storage, data)
@@ -68,11 +67,15 @@ func Migrate(target string) {
 		if strings.HasSuffix(read.TypeString, "]") {
 			size := types.GetArraySize(read.TypeString, read.Value)
 			for i := 0; i < size; i++ {
-				// storeComment(&contract.Storage, read.Name, &i)
 				structSize := types.FindStructSize(settings, read.TypeString)
-				for j := 0; j < structSize; j++ {
-					index := i*structSize + j
-					data := storage.GetKV(client, settings.Address, types.Array, slot, index)
+				if structSize > 0 {
+					for j := 0; j < structSize; j++ {
+						index := i*structSize + j
+						data := storage.GetKV(client, settings.Address, types.Array, slot, index)
+						storage.StoreStorage(&contract.Storage, data)
+					}
+				} else {
+					data := storage.GetKV(client, settings.Address, types.Array, slot, i)
 					storage.StoreStorage(&contract.Storage, data)
 				}
 			}
@@ -86,27 +89,23 @@ func Migrate(target string) {
 				if mapping.Ids != nil {
 					ids := idsKey[*mapping.Ids]
 					for _, id := range ids {
-						// storeComment(&contract.Storage, read.Name, &i)
 						mappingType := types.MappingType(read.TypeString)
 						data := storage.GetKV(client, settings.Address, mappingType, slot, id)
 						storage.StoreStorage(&contract.Storage, data)
 					}
-				} else if mapping.Addresses != nil {
+				} else if mapping.Addresses != nil && mapping.Index != nil {
 					addresses := addrs[*mapping.Addresses][*mapping.Index]
 					for _, address := range addresses {
 						if mapping.Struct != nil {
-							// storeComment(&contract.Storage, read.Name, &i)
 							structSize := mapping.Struct.Size
 							for j := 0; j < structSize; j++ {
 								data := storage.GetKV(client, settings.Address, types.Mapping_key_address_array_uint256, slot, address, j)
 								storage.StoreStorage(&contract.Storage, data)
 							}
 						} else {
-							// storeComment(&contract.Storage, read.Name, &i)
 							mappingType := types.MappingType(read.TypeString)
 							data := storage.GetKV(client, settings.Address, mappingType, slot, address)
 							storage.StoreStorage(&contract.Storage, data)
-							types.StoreData(&verifier, types.FindVerify(settings, read.Name), utils.HashToAddress(address).Hex())
 						}
 					}
 				}
@@ -114,16 +113,34 @@ func Migrate(target string) {
 				if mapping.Ids != nil {
 					ids := idsKey[*mapping.Ids]
 					for _, id := range ids {
-						// storeComment(&contract.Storage, read.Name, &i)
 						data := storage.GetKV(client, settings.Address, types.Mapping_key_uint256hash, slot, id)
 						storage.StoreStorage(&contract.Storage, data)
 					}
 				}
 			}
 		} else {
-			// storeComment(&contract.Storage, read.Name, nil)
 			data := storage.GetKV(client, settings.Address, types.Single, slot)
 			storage.StoreStorage(&contract.Storage, data)
+		}
+	}
+
+	for _, verify := range settings.Verify {
+		if verify.Addresses != nil {
+			addresses := addrs[*verify.Addresses][*verify.Index]
+			types.StoreData(&verifier, verify, addresses)
+			continue
+		}
+		if verify.Input == nil {
+			types.StoreData(&verifier, verify, nil)
+			continue
+		}
+		if verify.Input.Method != nil {
+			data := client.Call(contractAddress, *verify.Input.Method)
+			types.StoreData(&verifier, verify, common.BytesToHash(data))
+			continue
+		}
+		if verify.Input.Data != nil {
+			types.StoreData(&verifier, verify, *verify.Input.Data)
 		}
 	}
 
