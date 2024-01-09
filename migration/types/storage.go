@@ -17,7 +17,8 @@ const (
 )
 
 type StorageResults struct {
-	Kvset string
-	Key   common.Hash
-	Value common.Hash
+	Kvset  string
+	Key    common.Hash
+	Value  common.Hash
+	Report string
 }

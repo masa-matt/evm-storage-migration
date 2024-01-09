@@ -16,6 +16,18 @@ type Verifier struct {
 	Verify  []VerifyData `json:"verify"`
 }
 
+func (v *Verifier) TotalCases() int {
+	total := 0
+	for _, verify := range v.Verify {
+		if len(verify.Input) > 0 {
+			total += len(verify.Input)
+		} else {
+			total++
+		}
+	}
+	return total
+}
+
 type VerifyData struct {
 	Method string        `json:"method"`
 	Input  []interface{} `json:"input,omitempty"`
