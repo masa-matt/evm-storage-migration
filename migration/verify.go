@@ -18,7 +18,7 @@ func Verify(target string) {
 	toClient := utils.NewClient(config.GetVerifyTo())
 
 	contract := types.ReadContract(target)
-	verifier := types.ReadVerifier(target)
+	verifier := types.ReadVerifier(target, contract.Address)
 	types.WriteVerifier(verifier)
 
 	address := common.HexToAddress(verifier.Address)

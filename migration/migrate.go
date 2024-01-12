@@ -24,7 +24,7 @@ func Migrate(target string) {
 
 	client := utils.NewClient(config.GetNodeUrl())
 	settings := types.GetSettings(target)
-	verifier := types.ReadVerifier(target)
+	verifier := types.ReadVerifier(target, settings.Address)
 	reporter := report.InitGenesisReport(target)
 
 	fmt.Println("### Create Contract Info ###")

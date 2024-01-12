@@ -8,6 +8,19 @@
       "size": 4
     }
   ],
+  "addresses": [
+    {
+      "name": "eventName",
+      "logs": {
+        "topic": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "size": 1,
+        "indexes": [
+          1
+        ],
+        "hasData": false
+      }
+    }
+  ],
   "ids": [
     {
       "name": "variableName",
@@ -34,19 +47,6 @@
       "struct": {
         "name": "StructName",
         "size": 4
-      }
-    }
-  ],
-  "addresses": [
-    {
-      "name": "eventName",
-      "logs": {
-        "topic": "0x0000000000000000000000000000000000000000000000000000000000000000",
-        "size": 1,
-        "indexes": [
-          1
-        ],
-        "hasData": false
       }
     }
   ],

@@ -9,6 +9,9 @@ type ProgressBar struct {
 }
 
 func InitBar(length int) *ProgressBar {
+	if length == 0 {
+		return &ProgressBar{bar: nil}
+	}
 	return &ProgressBar{
 		bar: progressbar.NewOptions(length,
 			progressbar.OptionEnableColorCodes(true),
@@ -25,6 +28,9 @@ func InitBar(length int) *ProgressBar {
 }
 
 func (b *ProgressBar) Begin() {
+	if b.bar == nil {
+		return
+	}
 	err := b.bar.RenderBlank()
 	if err != nil {
 		panic(err)
@@ -32,6 +38,9 @@ func (b *ProgressBar) Begin() {
 }
 
 func (b *ProgressBar) Add() {
+	if b.bar == nil {
+		return
+	}
 	err := b.bar.Add(1)
 	if err != nil {
 		panic(err)
@@ -39,6 +48,9 @@ func (b *ProgressBar) Add() {
 }
 
 func (b *ProgressBar) Finish() {
+	if b.bar == nil {
+		return
+	}
 	err := b.bar.Finish()
 	if err != nil {
 		panic(err)

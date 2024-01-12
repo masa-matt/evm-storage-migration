@@ -2,9 +2,9 @@ package types
 
 import (
 	"encoding/json"
+	"errors"
 	"evm-storage-migration/utils"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -13,7 +13,7 @@ import (
 type Verifier struct {
 	Name    string       `json:"name"`
 	Address string       `json:"address"`
-	Verify  []VerifyData `json:"verify"`
+	Verify  []VerifyData `json:"verify,omitempty"`
 }
 
 func (v *Verifier) TotalCases() int {
@@ -37,7 +37,7 @@ type VerifyData struct {
 func WriteVerifier(verifier Verifier) {
 	f, err := os.Create(fmt.Sprintf("./verify/%s.json", verifier.Name))
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	defer f.Close()
@@ -45,12 +45,20 @@ func WriteVerifier(verifier Verifier) {
 	data, _ := json.MarshalIndent(verifier, "", "  ")
 	_, err = f.WriteString(string(data))
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 
-func ReadVerifier(name string) Verifier {
-	bytesJSON, err := os.ReadFile(fmt.Sprintf("./verify/%s.json", name))
+func ReadVerifier(name, address string) Verifier {
+	filename := fmt.Sprintf("./verify/%s.json", name)
+	if _, err := os.Stat(filename); errors.Is(err, os.ErrNotExist) {
+		WriteVerifier(Verifier{
+			Name:    name,
+			Address: address,
+			Verify:  []VerifyData{},
+		})
+	}
+	bytesJSON, err := os.ReadFile(filename)
 	if err != nil {
 		panic(err)
 	}

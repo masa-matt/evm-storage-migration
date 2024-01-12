@@ -3,7 +3,6 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 )
 
@@ -23,7 +22,7 @@ type Contract struct {
 func WriteContract(contract Contract) {
 	f, err := os.Create(fmt.Sprintf("./out/%s.json", contract.ContractName))
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	defer f.Close()
@@ -31,7 +30,7 @@ func WriteContract(contract Contract) {
 	data, _ := json.MarshalIndent(contract, "", "  ")
 	_, err = f.WriteString(string(data))
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 
