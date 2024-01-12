@@ -40,7 +40,7 @@ func Verify(target string) {
 	fmt.Println("### Verify Function ###")
 	vFunction := report.InitVerifyReport(target + "-function")
 	vFunctionBar := utils.InitBar(verifier.TotalCases())
-	vFunctionBar.Finish()
+	vFunctionBar.Begin()
 	for _, verify := range verifier.Verify {
 		fmt.Printf("verifying: %s\n", verify.Method)
 		if len(verify.Input) > 0 {
