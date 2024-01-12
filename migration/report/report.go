@@ -46,10 +46,18 @@ func (d *ReportData) AddStorageResult(key, value string, from, to common.Hash) {
 	d.data = append(d.data, []string{testcase, strconv.FormatBool(success), from.Hex(), to.Hex()})
 }
 
-func (d *ReportData) AddFunctionResult(method string, args interface{}, from, to []byte) {
+func (d *ReportData) AddFunctionResult(method string, args interface{}, from, to []byte, fromErr, toErr error) {
 	success := true
-	if !bytes.Equal(from, to) {
+	fromStr := "0x" + hex.EncodeToString(from)
+	toStr := "0x" + hex.EncodeToString(to)
+	if !bytes.Equal(from, to) || fromErr != nil || toErr != nil {
 		success = false
+		if fromErr != nil {
+			fromStr = fmt.Sprintf("%v", fromErr)
+		}
+		if toErr != nil {
+			toStr = fmt.Sprintf("%v", toErr)
+		}
 	}
 	var testcase string
 	if args != nil {
@@ -57,7 +65,7 @@ func (d *ReportData) AddFunctionResult(method string, args interface{}, from, to
 	} else {
 		testcase = fmt.Sprintf("method: %s", method)
 	}
-	d.data = append(d.data, []string{testcase, strconv.FormatBool(success), "0x" + hex.EncodeToString(from), "0x" + hex.EncodeToString(to)})
+	d.data = append(d.data, []string{testcase, strconv.FormatBool(success), fromStr, toStr})
 }
 
 func (d *ReportData) ReportVerifyResult() {

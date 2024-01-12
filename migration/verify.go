@@ -45,17 +45,17 @@ func Verify(target string) {
 		fmt.Printf("verifying: %s\n", verify.Method)
 		if len(verify.Input) > 0 {
 			for _, args := range verify.Input {
-				fromData := fromClient.Call(address, verify.Method, args)
-				toData := toClient.Call(address, verify.Method, args)
-				vFunction.AddFunctionResult(verify.Method, args, fromData, toData)
+				fromData, fromErr := fromClient.Call(address, verify.Method, args)
+				toData, toErr := toClient.Call(address, verify.Method, args)
+				vFunction.AddFunctionResult(verify.Method, args, fromData, toData, fromErr, toErr)
 				vFunctionBar.Add()
 			}
 			continue
 		}
 
-		fromData := fromClient.Call(address, verify.Method)
-		toData := toClient.Call(address, verify.Method)
-		vFunction.AddFunctionResult(verify.Method, nil, fromData, toData)
+		fromData, fromErr := fromClient.Call(address, verify.Method)
+		toData, toErr := toClient.Call(address, verify.Method)
+		vFunction.AddFunctionResult(verify.Method, nil, fromData, toData, fromErr, toErr)
 		vFunctionBar.Add()
 	}
 	vFunction.ReportVerifyResult()

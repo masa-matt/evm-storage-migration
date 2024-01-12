@@ -67,7 +67,7 @@ func (client *Client) Storage(account common.Address, key common.Hash) common.Ha
 	return common.BytesToHash(storage)
 }
 
-func (client *Client) Call(to common.Address, sig string, args ...interface{}) []byte {
+func (client *Client) Call(to common.Address, sig string, args ...interface{}) ([]byte, error) {
 	msg := ethereum.CallMsg{
 		From: to,
 		To:   &to,
@@ -75,9 +75,9 @@ func (client *Client) Call(to common.Address, sig string, args ...interface{}) [
 	}
 	data, err := client.c.CallContract(context.Background(), msg, nil)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return data
+	return data, nil
 }
 
 func makeData(sig string, args ...interface{}) []byte {

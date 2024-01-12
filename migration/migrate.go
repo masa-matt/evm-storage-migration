@@ -163,7 +163,10 @@ func Migrate(target string) {
 			continue
 		}
 		if verify.Input.Method != nil {
-			data := client.Call(contractAddress, *verify.Input.Method)
+			data, err := client.Call(contractAddress, *verify.Input.Method)
+			if err != nil {
+				panic(err)
+			}
 			types.StoreData(&verifier, verify, common.BytesToHash(data))
 			continue
 		}
